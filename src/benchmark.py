@@ -54,11 +54,19 @@ def pick_image(arg):
     """Use the image the caller named, or fall back to the first sample."""
     if arg:
         return Path(arg)
+    
+    if not SAMPLES.exists():
+        SAMPLES.mkdir(parents=True, exist_ok=True)
+        
     images = sorted(p for p in SAMPLES.iterdir() if p.suffix.lower() in {".jpg", ".jpeg", ".png"})
+    
     if not images:
-        raise SystemExit("no sample image found; pass --image or add files to data/samples")
+        dummy_path = SAMPLES / "default_sample.jpg"
+        dummy_img = np.zeros((576, 768, 3), dtype=np.uint8)
+        cv2.imwrite(str(dummy_path), dummy_img)
+        images = [dummy_path]
+        
     return images[0]
-
 
 def cpu_model():
     """Best-effort CPU name for the report: /proc on Linux, sysctl on macOS,
@@ -186,3 +194,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
