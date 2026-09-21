@@ -1,5 +1,3 @@
-
-
 import cv2
 import numpy as np
 
@@ -33,7 +31,7 @@ def output_layer_names(net):
     The layers OpenCV reads the detection results from are the output layers. This function returns the names of those layers.
     """
     layer_names = net.getLayerNames()
-    return [layer_names[i -1] for i in net.getUnconnectedOutLayers().flatten()]
+    return [layer_names[i - 1] for i in net.getUnconnectedOutLayers().flatten()]
 
 
 def postprocess(outputs, input_size, scale, pad_w, pad_h, conf_thresh, nms_thresh):
@@ -72,10 +70,6 @@ def _class_color(class_id):
     return int(b), int(g), int(r)
 
 def draw_detections(image, detections, class_names):
-    """
-    Draw bounding boxes and labels for each detection on the image.
-    """
-def draw_detections(image, detections, class_names):
     """Draw each box and its label onto a copy of the frame and return it."""
     out = image.copy()
     for class_id, confidence, (x, y, w, h) in detections:
@@ -88,6 +82,27 @@ def draw_detections(image, detections, class_names):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
     return out
 
+
+def letterbox(image, new_shape=416, color=(114, 114, 114)):
+    """Resize and pad image while meeting stride-multiple constraints."""
+    shape = image.shape[:2]
+    if isinstance(new_shape, int):
+        new_shape = (new_shape, new_shape)
+
+    r = min(new_shape[0] / shape[0], new_shape[1] / shape[1])
+
+    new_unpad = int(round(shape[1] * r)), int(round(shape[0] * r))
+    dw, dh = new_shape[1] - new_unpad[0], new_shape[0] - new_unpad[1]
+
+    dw /= 2
+    dh /= 2
+
+    if shape[::-1] != new_unpad:
+        image = cv2.resize(image, new_unpad, interpolation=cv2.INTER_LINEAR)
+    top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
+    left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
+    image = cv2.copyMakeBorder(image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
+    return image, r, left, top
 
 class FpsMeter:
     """Keeps a smoothed frames-per-second so the on-screen number doesn't jump

@@ -23,11 +23,11 @@ import matplotlib
 import numpy as np
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.pyplot as plt
 
-import edge_sim  # noqa: E402
-from detect import build_net, infer  # noqa: E402
-from utils import output_layer_names, rel  # noqa: E402
+import edge_sim
+from detect import build_net, infer
+from utils import output_layer_names, rel
 
 ROOT = Path(__file__).resolve().parent.parent
 SAMPLES = ROOT / "data/samples"
